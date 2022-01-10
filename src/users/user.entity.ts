@@ -30,9 +30,9 @@ export class User {
   updatedAt: string;
 
   @BeforeInsert()
-  encyptPassword() {
+  async encyptPassword() {
     const saltOrRounds = 10;
-    this.password = 'lala';
+    this.password = await bcrypt.hash(this.password, saltOrRounds);
   }
 
   async isValidPassword(password: string) {
