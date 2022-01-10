@@ -35,20 +35,24 @@ export class UsersController {
   }
 
   @Get()
-  async index(
+  index(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('q', new DefaultValuePipe('')) query: string,
   ): Promise<Pagination<User>> {
     limit = limit > 50 ? 50 : limit;
-    return this.usersService.findAll({
-      page,
-      limit,
-      route: 'http://localhost:3000/users',
-    });
+    return this.usersService.findAll(
+      {
+        page,
+        limit,
+        route: 'http://localhost:3000/users',
+      },
+      query,
+    );
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  show(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.findOneById(id);
   }
 }

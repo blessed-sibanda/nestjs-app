@@ -7,4 +7,5 @@ module.exports = {
   database: 'nestjs',
   entities: ['dist/**/*.entity{.ts,.js}'],
   synchronize: 'true',
+  logging: true,
 };
