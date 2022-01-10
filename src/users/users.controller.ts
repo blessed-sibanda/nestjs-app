@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   UsePipes,
+  Delete,
 } from '@nestjs/common';
 import {
   InjectLogger,

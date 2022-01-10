@@ -2,7 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import {
   NestjsWinstonLoggerService,
+  appendRequestIdToLogger,
+  LoggingInterceptor,
   morganRequestLogger,
+  morganResponseLogger,
+  appendIdToRequest,
 } from 'nestjs-winston-logger';
 import { format, transports } from 'winston';
 
@@ -22,7 +26,14 @@ async function bootstrap() {
     ],
   });
   app.useLogger(globalLogger);
+  // append id to identify request
+  app.use(appendIdToRequest);
+  app.use(appendRequestIdToLogger(globalLogger));
+
   app.use(morganRequestLogger(globalLogger));
+  app.use(morganResponseLogger(globalLogger));
+
+  app.useGlobalInterceptors(new LoggingInterceptor(globalLogger));
 
   await app.listen(3000);
 }
