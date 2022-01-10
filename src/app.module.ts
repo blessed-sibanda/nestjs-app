@@ -11,16 +11,7 @@ import { UsersModule } from './users/users.module';
   imports: [
     AuthModule,
     UsersModule,
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'nestjs',
-      password: '1234pass',
-      database: 'nestjs',
-      entities: [User],
-      synchronize: true,
-    }),
+    TypeOrmModule.forRoot({ entities: [User] }),
   ],
   controllers: [AppController],
   providers: [AppService],

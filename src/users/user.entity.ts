@@ -14,7 +14,7 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 50 })
+  @Column({ default: '' })
   name: string;
 
   @Column({ unique: true })
@@ -33,6 +33,11 @@ export class User {
   async encyptPassword() {
     const saltOrRounds = 10;
     this.password = await bcrypt.hash(this.password, saltOrRounds);
+  }
+
+  @BeforeInsert()
+  downcaseEmail() {
+    this.email = this.email.toLowerCase();
   }
 
   async isValidPassword(password: string) {

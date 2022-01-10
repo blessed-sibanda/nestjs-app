@@ -10,7 +10,7 @@ export class UsersService {
   ) {}
 
   findAll(): Promise<User[]> {
-    return this.usersRepository.find();
+    return this.usersRepository.find({ select: ['id', 'name', 'email'] });
   }
 
   async create(attributes: Partial<User>): Promise<User> {
@@ -19,7 +19,9 @@ export class UsersService {
   }
 
   findOneById(id: number): Promise<User> {
-    return this.usersRepository.findOne(id);
+    return this.usersRepository.findOne(id, {
+      select: ['id', 'name', 'email'],
+    });
   }
 
   findOneByEmail(email: string): Promise<User> {
