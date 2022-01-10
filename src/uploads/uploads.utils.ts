@@ -1,7 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { extname, join } from 'path';
+import { unlink } from 'fs/promises';
 
 const imageFileFilter = (req, file: Express.Multer.File, callback) => {
   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
@@ -29,4 +30,11 @@ export const imageUploadMulterOptions: MulterOptions = {
     filename: editFileName,
   }),
   fileFilter: imageFileFilter,
+};
+
+export const deleteFile = async (filename?: string | undefined) => {
+  if (filename) {
+    let path = join(__dirname, '../../', 'files', filename);
+    await unlink(path);
+  }
 };

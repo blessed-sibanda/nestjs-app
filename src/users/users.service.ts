@@ -6,8 +6,10 @@ import {
   Pagination,
 } from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
+import { unlink } from 'fs/promises';
 import { textSearchByFields } from 'typeorm-text-search';
 import { User } from './user.entity';
+import { deleteFile } from 'src/uploads/uploads.utils';
 
 @Injectable()
 export class UsersService {
@@ -44,7 +46,11 @@ export class UsersService {
     image?: string,
   ): Promise<User> {
     const entity = Object.assign(user, attributes);
-    if (image) entity.image = image;
+    let u = await this.findById(user.id);
+    if (image) {
+      await deleteFile(u.image);
+      entity.image = image;
+    }
     await this.usersRepository.save(entity);
     return this.findById(user.id);
   }
@@ -60,6 +66,8 @@ export class UsersService {
   }
 
   async remove(id: number): Promise<void> {
+    let user = await this.findById(id);
     await this.usersRepository.delete(id);
+    await deleteFile(user.image);
   }
 }
