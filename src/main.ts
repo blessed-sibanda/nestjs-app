@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import {
   NestjsWinstonLoggerService,
-  LoggingInterceptor,
   morganRequestLogger,
 } from 'nestjs-winston-logger';
 import { format, transports } from 'winston';
