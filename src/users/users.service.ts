@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 
@@ -9,8 +14,11 @@ export class UsersService {
     @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
 
-  findAll(): Promise<User[]> {
-    return this.usersRepository.find({ select: ['id', 'name', 'email'] });
+  async findAll(options: IPaginationOptions): Promise<Pagination<User>> {
+    const queryBuilder = this.usersRepository.createQueryBuilder('u');
+    queryBuilder.orderBy('u.id', 'ASC');
+    queryBuilder.select(['u.id', 'u.name', 'u.email']);
+    return paginate<User>(queryBuilder, options);
   }
 
   async create(attributes: Partial<User>): Promise<User> {

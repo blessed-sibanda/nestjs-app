@@ -7,7 +7,10 @@ import {
   ParseIntPipe,
   UsePipes,
   Delete,
+  Query,
+  DefaultValuePipe,
 } from '@nestjs/common';
+import { Pagination } from 'nestjs-typeorm-paginate';
 import {
   InjectLogger,
   NestjsWinstonLoggerService,
@@ -32,9 +35,16 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
-    this.logger.log('getting all users');
-    return this.usersService.findAll();
+  async index(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ): Promise<Pagination<User>> {
+    limit = limit > 50 ? 50 : limit;
+    return this.usersService.findAll({
+      page,
+      limit,
+      route: 'http://localhost:3000/users',
+    });
   }
 
   @Get(':id')
