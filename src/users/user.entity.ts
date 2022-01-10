@@ -23,6 +23,9 @@ export class User {
   @Column()
   password: string;
 
+  @Column({ nullable: true })
+  photo: string;
+
   @CreateDateColumn()
   createdAt: string;
 
@@ -47,6 +50,6 @@ export class User {
   static schema = Joi.object({
     name: Joi.string().min(3).required(),
     email: Joi.string().email().required(),
-    password: Joi.string().min(6).max(30),
+    password: Joi.string().min(6).max(30).required(),
   });
 }

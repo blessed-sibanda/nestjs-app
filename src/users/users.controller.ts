@@ -9,7 +9,10 @@ import {
   Delete,
   Query,
   DefaultValuePipe,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import {
   InjectLogger,
@@ -32,6 +35,19 @@ export class UsersController {
   create(@Body() user: Partial<User>) {
     this.logger.log(`user --> ${JSON.stringify(user)}`);
     return this.usersService.create(user);
+  }
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  uploadFile(
+    @Body(new JoiValidationPipe(User.schema)) body: Partial<User>,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    console.log(file);
+    return {
+      body,
+      file: file?.buffer.toString(),
+    };
   }
 
   @Get()
