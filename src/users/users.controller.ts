@@ -25,7 +25,7 @@ import {
 } from 'nestjs-winston-logger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { JoiValidationPipe } from 'src/shared/joi-validation.pipe';
-import { imageUploadMulterOptions } from 'src/uploads/uploads.utils';
+import { imageUploadMulterOptions } from 'src/shared/file-upload.utils';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
 

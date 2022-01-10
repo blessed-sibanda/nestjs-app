@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { imageUploadMulterOptions } from 'src/uploads/uploads.utils';
+import { imageUploadMulterOptions } from 'src/shared/file-upload.utils';
 
 @Controller('uploads')
 export class UploadsController {

@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 import { unlink } from 'fs/promises';
 import { textSearchByFields } from 'typeorm-text-search';
 import { User } from './user.entity';
-import { deleteFile } from 'src/uploads/uploads.utils';
+import { deleteFile } from 'src/shared/file-upload.utils';
 
 @Injectable()
 export class UsersService {
