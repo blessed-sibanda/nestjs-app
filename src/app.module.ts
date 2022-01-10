@@ -13,7 +13,7 @@ import { UploadsModule } from './uploads/uploads.module';
     AuthModule,
     UsersModule,
     TypeOrmModule.forRoot(),
-    MulterModule.register({ dest: './files' }),
+    MulterModule.register(),
     UploadsModule,
   ],
   controllers: [AppController],
