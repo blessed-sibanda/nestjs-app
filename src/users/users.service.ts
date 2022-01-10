@@ -38,8 +38,13 @@ export class UsersService {
     return await this.usersRepository.save(entity);
   }
 
-  async update(user: User, attributes: Partial<User>): Promise<User> {
+  async update(
+    user: User,
+    attributes: Partial<User>,
+    image?: string,
+  ): Promise<User> {
     const entity = Object.assign(user, attributes);
+    if (image) entity.image = image;
     await this.usersRepository.save(entity);
     return this.findById(user.id);
   }
@@ -54,7 +59,7 @@ export class UsersService {
     return this.usersRepository.findOne({ email });
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     await this.usersRepository.delete(id);
   }
 }

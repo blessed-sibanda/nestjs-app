@@ -15,6 +15,7 @@ import {
   ForbiddenException,
   UseGuards,
   Put,
+  NotFoundException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Pagination } from 'nestjs-typeorm-paginate';
@@ -46,7 +47,7 @@ export class UsersController {
   @Put(':id')
   @UseInterceptors(FileInterceptor('image', imageUploadMulterOptions))
   async update(
-    @Body(new JoiValidationPipe(User.updateSchema)) body: Partial<User>,
+    @Body(new JoiValidationPipe(User.updateSchema)) data: Partial<User>,
     @Request() req,
     @Param('id', ParseIntPipe) id: number,
     @UploadedFile() image?: Express.Multer.File,
@@ -54,11 +55,11 @@ export class UsersController {
     if (req.user.id != id)
       throw new ForbiddenException('You can only update your profile');
     else {
-      let data;
-      if (image) data = { ...body, image: image.filename };
-      else data = body;
-      let user = await this.usersService.update(req.user, data);
-
+      let user = await this.usersService.update(
+        req.user,
+        data,
+        image?.filename,
+      );
       return user;
     }
   }
@@ -80,8 +81,18 @@ export class UsersController {
     );
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
-  show(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.findById(id);
+  async show(@Param('id', ParseIntPipe) id: number) {
+    let user = await this.usersService.findById(id);
+    if (user) return user;
+    else throw new NotFoundException('User not found');
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  delete(@Param('id', ParseIntPipe) id: number, @Request() req) {
+    if (req.user.id === id) return this.usersService.remove(id);
+    else throw new ForbiddenException('You can only delete your profile');
   }
 }
