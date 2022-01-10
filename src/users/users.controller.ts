@@ -11,6 +11,10 @@ import {
   DefaultValuePipe,
   UseInterceptors,
   UploadedFile,
+  Request,
+  ForbiddenException,
+  UseGuards,
+  Put,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Pagination } from 'nestjs-typeorm-paginate';
@@ -18,7 +22,9 @@ import {
   InjectLogger,
   NestjsWinstonLoggerService,
 } from 'nestjs-winston-logger';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { JoiValidationPipe } from 'src/shared/joi-validation.pipe';
+import { imageUploadMulterOptions } from 'src/uploads/uploads.utils';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
 
@@ -31,23 +37,30 @@ export class UsersController {
   ) {}
 
   @Post()
-  @UsePipes(new JoiValidationPipe(User.schema))
+  @UsePipes(new JoiValidationPipe(User.createSchema))
   create(@Body() user: Partial<User>) {
-    this.logger.log(`user --> ${JSON.stringify(user)}`);
     return this.usersService.create(user);
   }
 
-  @Post('upload')
-  @UseInterceptors(FileInterceptor('file'))
-  uploadFile(
-    @Body(new JoiValidationPipe(User.schema)) body: Partial<User>,
-    @UploadedFile() file?: Express.Multer.File,
+  @UseGuards(JwtAuthGuard)
+  @Put(':id')
+  @UseInterceptors(FileInterceptor('image', imageUploadMulterOptions))
+  async update(
+    @Body(new JoiValidationPipe(User.updateSchema)) body: Partial<User>,
+    @Request() req,
+    @Param('id', ParseIntPipe) id: number,
+    @UploadedFile() image?: Express.Multer.File,
   ) {
-    console.log(file);
-    return {
-      body,
-      file: file?.buffer.toString(),
-    };
+    if (req.user.id != id)
+      throw new ForbiddenException('You can only update your profile');
+    else {
+      let data;
+      if (image) data = { ...body, image: image.filename };
+      else data = body;
+      let user = await this.usersService.update(req.user, data);
+
+      return user;
+    }
   }
 
   @Get()
@@ -69,6 +82,6 @@ export class UsersController {
 
   @Get(':id')
   show(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.findOneById(id);
+    return this.usersService.findById(id);
   }
 }

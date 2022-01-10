@@ -24,18 +24,13 @@
     "schema:drop": "ts-node ./node_modules/typeorm/cli.js schema:drop"
   },
   "dependencies": {
-    "@casl/ability": "^5.4.3",
     "@nestjs/common": "^8.0.0",
     "@nestjs/core": "^8.0.0",
-    "@nestjs/cqrs": "^8.0.1",
     "@nestjs/jwt": "^8.0.0",
     "@nestjs/passport": "^8.0.1",
     "@nestjs/platform-express": "^8.0.0",
-    "@nestjs/serve-static": "^2.2.2",
     "@nestjs/typeorm": "^8.0.2",
     "bcrypt": "^5.0.1",
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.13.2",
     "faker": "^6.6.6",
     "joi": "^17.5.0",
     "jsonwebtoken": "^8.5.1",

@@ -24,7 +24,7 @@ export class User {
   password: string;
 
   @Column({ nullable: true })
-  photo: string;
+  image: string;
 
   @CreateDateColumn()
   createdAt: string;
@@ -47,9 +47,15 @@ export class User {
     return await bcrypt.compare(password, this.password);
   }
 
-  static schema = Joi.object({
+  static createSchema = Joi.object({
     name: Joi.string().min(3).required(),
     email: Joi.string().email().required(),
     password: Joi.string().min(6).max(30).required(),
+  });
+
+  static updateSchema = Joi.object({
+    name: Joi.string().min(3),
+    email: Joi.string().email(),
+    password: Joi.string().min(6).max(30),
   });
 }

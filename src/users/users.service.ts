@@ -26,6 +26,7 @@ export class UsersService {
       'u.id',
       'u.name',
       'u.email',
+      'u.image',
       'u.createdAt',
       'u.updatedAt',
     ]);
@@ -37,9 +38,15 @@ export class UsersService {
     return await this.usersRepository.save(entity);
   }
 
-  findOneById(id: number): Promise<User> {
+  async update(user: User, attributes: Partial<User>): Promise<User> {
+    const entity = Object.assign(user, attributes);
+    await this.usersRepository.save(entity);
+    return this.findById(user.id);
+  }
+
+  findById(id: number): Promise<User> {
     return this.usersRepository.findOne(id, {
-      select: ['id', 'name', 'email', 'createdAt', 'createdAt'],
+      select: ['id', 'name', 'email', 'image', 'createdAt', 'createdAt'],
     });
   }
 
