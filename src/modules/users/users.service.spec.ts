@@ -48,6 +48,18 @@ describe('UsersService', () => {
       ).toBeTruthy();
     });
 
+    it('returns the correct fields', async () => {
+      let result = await service.findAll({ page: 1, limit: 10 });
+      let item = result.items[0];
+      expect(item.password).toBeUndefined();
+      expect(item.id).toBeDefined();
+      expect(item.name).toBeDefined();
+      expect(item.email).toBeDefined();
+      expect(item.image).toBeDefined();
+      expect(item.createdAt).toBeDefined();
+      expect(item.updatedAt).toBeDefined();
+    });
+
     it('filters users using given query', async () => {
       let result = await service.findAll({ page: 1, limit: 10 }, 'b');
       result['items'].forEach((item) => {
@@ -55,6 +67,38 @@ describe('UsersService', () => {
           'b',
         );
       });
+    });
+  });
+
+  describe('findById', () => {
+    let u1, u2;
+    beforeAll(async () => {
+      let users = await generateTestUsers(4);
+      u1 = users[0];
+      u2 = users[1];
+    });
+
+    it('returns user with matching id', async () => {
+      let result1 = await service.findById(u1.id);
+      expect(result1).toEqual(u1);
+      let result2 = await service.findById(u2.id);
+      expect(result2).toEqual(u2);
+    });
+  });
+
+  describe('findOneByEmail', () => {
+    let u1, u2;
+    beforeAll(async () => {
+      let users = await generateTestUsers(4);
+      u1 = users[0];
+      u2 = users[1];
+    });
+
+    it('returns user with matching email', async () => {
+      let result1 = await service.findOneByEmail(u1.email);
+      expect(result1).toEqual(u1);
+      let result2 = await service.findOneByEmail(u2.email);
+      expect(result2).toEqual(u2);
     });
   });
 

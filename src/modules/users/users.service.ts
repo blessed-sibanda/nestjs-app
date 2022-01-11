@@ -49,9 +49,7 @@ export class UsersService {
   }
 
   findById(id: number): Promise<User> {
-    return this.usersRepository.findOne(id, {
-      select: ['id', 'name', 'email', 'image', 'createdAt', 'createdAt'],
-    });
+    return this.usersRepository.findOne(id);
   }
 
   findOneByEmail(email: string): Promise<User> {
