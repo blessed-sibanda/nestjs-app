@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 describe('AuthController', () => {
   let controller: AuthController;
   let authService: AuthService;
+  let req = { user: new User({ email: 'test@example.com' }) };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,9 +28,15 @@ describe('AuthController', () => {
   describe('login', () => {
     it('should login', () => {
       let login = jest.spyOn(authService, 'login');
-      let req = { user: new User({ email: 'test@example.com' }) };
       controller.login(req);
       expect(login).toBeCalledWith(req.user);
+    });
+  });
+
+  describe('getProfile', () => {
+    it('should return logged in user data', () => {
+      let result = controller.getProfile(req);
+      expect(result).toEqual(req.user);
     });
   });
 });
