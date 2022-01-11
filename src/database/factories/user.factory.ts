@@ -1,6 +1,6 @@
 import { define } from 'typeorm-seeding';
 import Faker from 'faker';
-import { User } from '../../users/user.entity';
+import { User } from '../../modules/users/user.entity';
 
 define(User, (faker: typeof Faker) => {
   const user = new User();

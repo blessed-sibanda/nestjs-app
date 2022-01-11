@@ -4,9 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
-import { UploadsModule } from './uploads/uploads.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -14,7 +13,6 @@ import { UploadsModule } from './uploads/uploads.module';
     UsersModule,
     TypeOrmModule.forRoot(),
     MulterModule.register(),
-    UploadsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

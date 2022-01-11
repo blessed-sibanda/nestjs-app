@@ -34,7 +34,9 @@ export const imageUploadMulterOptions: MulterOptions = {
 
 export const deleteFile = async (filename?: string | undefined) => {
   if (filename) {
-    let path = join(__dirname, '../../', 'files', filename);
-    await unlink(path);
+    let path = join(__dirname, '../../../', 'files', filename);
+    try {
+      await unlink(path);
+    } catch (err) {}
   }
 };

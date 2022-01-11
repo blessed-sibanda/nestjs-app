@@ -1,9 +1,18 @@
-import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Request,
+  UseGuards,
+  Param,
+  Res,
+} from '@nestjs/common';
+import { Response } from 'express';
 
 import { AppService } from './app.service';
-import { AuthService } from './auth/auth.service';
-import { JwtAuthGuard } from './auth/jwt-auth.guard';
-import { LocalAuthGuard } from './auth/local-auth.guard';
+import { AuthService } from './modules/auth/auth.service';
+import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
+import { LocalAuthGuard } from './modules/auth/local-auth.guard';
 
 @Controller()
 export class AppController {
@@ -27,5 +36,10 @@ export class AppController {
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;
+  }
+
+  @Get('files/:filePath')
+  showImage(@Param('filePath') file, @Res() res: Response) {
+    return res.sendFile(file, { root: './files' });
   }
 }

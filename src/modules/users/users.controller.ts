@@ -16,6 +16,7 @@ import {
   UseGuards,
   Put,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Pagination } from 'nestjs-typeorm-paginate';
@@ -23,9 +24,9 @@ import {
   InjectLogger,
   NestjsWinstonLoggerService,
 } from 'nestjs-winston-logger';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { JoiValidationPipe } from 'src/shared/joi-validation.pipe';
-import { imageUploadMulterOptions } from 'src/shared/file-upload.utils';
+import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
+import { JoiValidationPipe } from 'src/shared/pipes/joi-validation.pipe';
+import { imageUploadMulterOptions } from 'src/shared/utils/file-upload.utils';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
 
@@ -39,8 +40,10 @@ export class UsersController {
 
   @Post()
   @UsePipes(new JoiValidationPipe(User.createSchema))
-  create(@Body() user: Partial<User>) {
-    return this.usersService.create(user);
+  create(@Body() body: Partial<User>) {
+    let user = this.usersService.findOneByEmail(body.email);
+    if (user) throw new BadRequestException('Email is already in use');
+    return this.usersService.create(body);
   }
 
   @UseGuards(JwtAuthGuard)
