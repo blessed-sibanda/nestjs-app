@@ -1,15 +1,8 @@
 import { User } from '../../modules/users/user.entity';
-import { Connection, getRepository } from 'typeorm';
+import { getRepository } from 'typeorm';
 import { Provider } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import {
-  Factory,
-  factory,
-  runSeeder,
-  Seeder,
-  useRefreshDatabase,
-  useSeeding,
-} from 'typeorm-seeding';
+import { factory, useRefreshDatabase, useSeeding } from 'typeorm-seeding';
 
 export const usersTestRepository = async (): Promise<Provider<any>> => {
   await useRefreshDatabase({
