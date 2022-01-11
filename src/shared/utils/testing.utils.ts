@@ -15,7 +15,7 @@ export const usersTestRepository = async (): Promise<Provider<any>> => {
   };
 };
 
-export const generateTestUsers = async (n: number = 10) => {
+export const generateTestUsers = async (n: number = 10): Promise<User[]> => {
   await useSeeding();
-  await factory(User)().createMany(n);
+  return await factory(User)().createMany(n);
 };

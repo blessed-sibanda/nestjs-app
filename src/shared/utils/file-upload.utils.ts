@@ -1,8 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 import { diskStorage } from 'multer';
-import { extname, join } from 'path';
-import { unlink } from 'fs/promises';
+import { extname } from 'path';
+import { randomInt } from 'crypto';
 
 const imageFileFilter = (req, file: Express.Multer.File, callback) => {
   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
@@ -17,10 +17,7 @@ const imageFileFilter = (req, file: Express.Multer.File, callback) => {
 const editFileName = (req, file: Express.Multer.File, callback) => {
   const name = file.originalname.split('.')[0];
   const fileExtName = extname(file.originalname);
-  const randomName = Array(5)
-    .fill(null)
-    .map(() => Math.round(Math.random() * 16).toString())
-    .join('');
+  const randomName = randomInt(999999).toString();
   callback(null, `${name}-${randomName}${fileExtName}`);
 };
 
@@ -30,13 +27,4 @@ export const imageUploadMulterOptions: MulterOptions = {
     filename: editFileName,
   }),
   fileFilter: imageFileFilter,
-};
-
-export const deleteFile = async (filename?: string | undefined) => {
-  if (filename) {
-    let path = join(__dirname, '../../../', 'files', filename);
-    try {
-      await unlink(path);
-    } catch (err) {}
-  }
 };

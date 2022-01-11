@@ -5,15 +5,16 @@ import {
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
+import { AppService } from '../../app.service';
 import { Repository } from 'typeorm';
 import { textSearchByFields } from 'typeorm-text-search';
 import { User } from './user.entity';
-import { deleteFile } from '../../shared/utils/file-upload.utils';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
+    private appService: AppService,
   ) {}
 
   findAll(
@@ -39,19 +40,12 @@ export class UsersService {
     return await this.usersRepository.save(entity);
   }
 
-  async update(
-    user: User,
-    attributes: Partial<User>,
-    image?: string,
-  ): Promise<User> {
+  async update(user: User, attributes: Partial<User>): Promise<User> {
     const entity = Object.assign(user, attributes);
-    let u = await this.findById(user.id);
-    if (image) {
-      await deleteFile(u.image);
-      entity.image = image;
-    }
-    await this.usersRepository.save(entity);
-    return this.findById(user.id);
+    let u = await this.usersRepository.findOne(user.id);
+    if (attributes.image) await this.appService.deleteFile(u.image);
+
+    return await this.usersRepository.save(entity);
   }
 
   findById(id: number): Promise<User> {
@@ -67,6 +61,6 @@ export class UsersService {
   async remove(id: number): Promise<void> {
     let user = await this.findById(id);
     await this.usersRepository.delete(id);
-    await deleteFile(user.image);
+    await this.appService.deleteFile(user.image);
   }
 }

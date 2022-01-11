@@ -51,12 +51,8 @@ export class UsersController {
     if (req.user.id != id)
       throw new ForbiddenException('You can only update your profile');
     else {
-      let user = await this.usersService.update(
-        req.user,
-        data,
-        image?.filename,
-      );
-      return user;
+      data.image = image?.filename;
+      return await this.usersService.update(req.user, data);
     }
   }
 
