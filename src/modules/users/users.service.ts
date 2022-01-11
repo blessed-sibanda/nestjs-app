@@ -6,10 +6,9 @@ import {
   Pagination,
 } from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
-import { unlink } from 'fs/promises';
 import { textSearchByFields } from 'typeorm-text-search';
 import { User } from './user.entity';
-import { deleteFile } from 'src/shared/utils/file-upload.utils';
+import { deleteFile } from '../../shared/utils/file-upload.utils';
 
 @Injectable()
 export class UsersService {
@@ -17,7 +16,7 @@ export class UsersService {
     @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
 
-  async findAll(
+  findAll(
     options: IPaginationOptions,
     q: string = '',
   ): Promise<Pagination<User>> {
@@ -36,7 +35,7 @@ export class UsersService {
   }
 
   async create(attributes: Partial<User>): Promise<User> {
-    const entity = Object.assign(new User(), attributes);
+    const entity = new User(attributes);
     return await this.usersRepository.save(entity);
   }
 

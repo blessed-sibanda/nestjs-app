@@ -11,6 +11,13 @@ import * as Joi from 'joi';
 
 @Entity()
 export class User {
+  constructor(data?: Partial<User> | undefined) {
+    this.name = data?.name;
+    this.email = data?.email;
+    this.password = data?.password;
+    this.image = data?.image;
+  }
+
   @PrimaryGeneratedColumn()
   id: number;
 

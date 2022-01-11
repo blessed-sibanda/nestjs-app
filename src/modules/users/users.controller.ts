@@ -20,28 +20,21 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Pagination } from 'nestjs-typeorm-paginate';
-import {
-  InjectLogger,
-  NestjsWinstonLoggerService,
-} from 'nestjs-winston-logger';
-import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
-import { JoiValidationPipe } from 'src/shared/pipes/joi-validation.pipe';
-import { imageUploadMulterOptions } from 'src/shared/utils/file-upload.utils';
+
+import { JwtAuthGuard } from '../../shared/guards/jwt-auth.guard';
+import { JoiValidationPipe } from '../../shared/pipes/joi-validation.pipe';
+import { imageUploadMulterOptions } from '../../shared/utils/file-upload.utils';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
-  constructor(
-    private readonly usersService: UsersService,
-    @InjectLogger(UsersController.name)
-    private logger: NestjsWinstonLoggerService,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @UsePipes(new JoiValidationPipe(User.createSchema))
-  create(@Body() body: Partial<User>) {
-    let user = this.usersService.findOneByEmail(body.email);
+  async create(@Body() body: Partial<User>) {
+    let user = await this.usersService.findOneByEmail(body.email);
     if (user) throw new BadRequestException('Email is already in use');
     return this.usersService.create(body);
   }
