@@ -21,6 +21,7 @@ import { envSchemaConfig } from './shared/config/env-schema.config';
     UsersModule,
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: process.env.NODE_ENV == 'test' ? '.test.env' : '.env',
       load: [databaseConfig, appConfig],
       validationSchema: envSchemaConfig,
       validationOptions: {
