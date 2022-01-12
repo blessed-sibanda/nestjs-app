@@ -2,12 +2,10 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import * as Joi from 'joi';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
-import { User } from './modules/users/user.entity';
 import { UsersModule } from './modules/users/users.module';
 import { appConfig } from './shared/config/app.config';
 
@@ -26,7 +24,6 @@ import { envSchemaConfig } from './shared/config/env-schema.config';
       load: [databaseConfig, appConfig],
       validationSchema: envSchemaConfig,
       validationOptions: {
-        // allowUnknown: false,
         abortEarly: true,
       },
       expandVariables: true,

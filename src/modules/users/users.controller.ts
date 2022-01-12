@@ -20,6 +20,10 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Pagination } from 'nestjs-typeorm-paginate';
+import {
+  InjectLogger,
+  NestjsWinstonLoggerService,
+} from 'nestjs-winston-logger';
 
 import { JwtAuthGuard } from '../../shared/guards/jwt-auth.guard';
 import { JoiValidationPipe } from '../../shared/pipes/joi-validation.pipe';
@@ -29,7 +33,11 @@ import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    @InjectLogger(UsersController.name)
+    private logger: NestjsWinstonLoggerService,
+  ) {}
 
   @Post()
   @UsePipes(new JoiValidationPipe(User.createSchema))
@@ -62,6 +70,7 @@ export class UsersController {
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
     @Query('q', new DefaultValuePipe('')) query: string,
   ): Promise<Pagination<User>> {
+    this.logger.log('xxxxx blah blah blah xxx');
     limit = limit > 50 ? 50 : limit;
     return this.usersService.findAll(
       {
