@@ -1,6 +1,6 @@
 const baseConfig = require('./ormconfig');
 
 module.exports = {
-  ...baseConfig,
+  ...baseConfig[0],
   entities: ['src/**/*.entity.ts'],
 };

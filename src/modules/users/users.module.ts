@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { NestjsWinstonLoggerModule } from 'nestjs-winston-logger';
 import { format, transports } from 'winston';
-import { AppService } from 'src/app.service';
+import { AppService } from '../../app.service';
 
 @Module({
   imports: [
