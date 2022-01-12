@@ -21,7 +21,6 @@ import { envSchemaConfig } from './shared/config/env-schema.config';
     UsersModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: process.env.NODE_ENV == 'test' ? '.test.env' : '.env',
       load: [databaseConfig, appConfig],
       validationSchema: envSchemaConfig,
       validationOptions: {
@@ -39,6 +38,7 @@ import { envSchemaConfig } from './shared/config/env-schema.config';
         port: configService.get<IDatabaseConfig>('database').port,
         password: configService.get<IDatabaseConfig>('database').password,
         entities: ['dist/**/*.entity{.ts,.js}'],
+        synchronize: process.env.NODE_ENV !== 'production',
       }),
       inject: [ConfigService],
     }),

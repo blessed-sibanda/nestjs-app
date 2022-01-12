@@ -5,12 +5,7 @@ import {
   usersTestRepository,
 } from '../../shared/utils/testing.utils';
 import { User } from './user.entity';
-import {
-  createConnection,
-  createConnections,
-  getConnection,
-  Repository,
-} from 'typeorm';
+import { createConnections, getConnection, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { randomInt } from 'crypto';
 import { AppService } from '../../app.service';
@@ -20,12 +15,14 @@ describe('UsersService', () => {
   let appService: AppService;
   let usersRepo: Repository<User>;
 
-  beforeEach(async () => {
-    // await createConnection('test');
-    // getConnection('test');
+  beforeAll(async () => {
+    await createConnections();
+    getConnection();
+  });
 
+  beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersService, await usersTestRepository(), AppService],
+      providers: [UsersService, usersTestRepository(), AppService],
     }).compile();
 
     service = module.get<UsersService>(UsersService);
@@ -33,20 +30,22 @@ describe('UsersService', () => {
     appService = module.get<AppService>(AppService);
   });
 
+  afterEach(async () => usersRepo.clear());
+
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
   describe('findAll', () => {
-    beforeAll(async () => await generateTestUsers(25));
+    beforeEach(async () => await generateTestUsers(7));
 
     it('returns paginated user list sorted in ascending order', async () => {
-      let result = await service.findAll({ page: 1, limit: 10 });
-      expect(result['items'].length).toBe(10);
+      let result = await service.findAll({ page: 1, limit: 3 });
+      expect(result['items'].length).toBe(3);
       expect(result['meta']).toEqual({
-        totalItems: 25,
-        itemCount: 10,
-        itemsPerPage: 10,
+        totalItems: 7,
+        itemCount: 3,
+        itemsPerPage: 3,
         totalPages: 3,
         currentPage: 1,
       });
@@ -78,7 +77,7 @@ describe('UsersService', () => {
     });
   });
 
-  describe.only('findById', () => {
+  describe('findById', () => {
     let u1, u2;
     beforeAll(async () => {
       let users = await generateTestUsers(4);
