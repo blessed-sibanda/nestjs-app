@@ -1,40 +1,16 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import {
-  NestjsWinstonLoggerService,
-  appendRequestIdToLogger,
-  LoggingInterceptor,
-  morganRequestLogger,
-  morganResponseLogger,
-  appendIdToRequest,
-} from 'nestjs-winston-logger';
-import { format, transports } from 'winston';
+
+import { ConfigService } from '@nestjs/config';
+import { IAppConfig } from './shared/config/app.config';
+import { setUpWinstonLogger } from './shared/utils/winston-logger.utils';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
 
-  const globalLogger = new NestjsWinstonLoggerService({
-    format: format.combine(
-      format.timestamp({ format: 'isoDateTime' }),
-      format.json(),
-      format.colorize({ all: true }),
-    ),
-    transports: [
-      new transports.File({ filename: 'error.log', level: 'error' }),
-      new transports.File({ filename: 'combined.log' }),
-      new transports.Console(),
-    ],
-  });
-  app.useLogger(globalLogger);
-  // append id to identify request
-  app.use(appendIdToRequest);
-  app.use(appendRequestIdToLogger(globalLogger));
+  setUpWinstonLogger(app);
 
-  app.use(morganRequestLogger(globalLogger));
-  app.use(morganResponseLogger(globalLogger));
-
-  app.useGlobalInterceptors(new LoggingInterceptor(globalLogger));
-
-  await app.listen(3000);
+  const configService = app.get(ConfigService);
+  await app.listen(configService.get<IAppConfig>('app').port);
 }
 bootstrap();
