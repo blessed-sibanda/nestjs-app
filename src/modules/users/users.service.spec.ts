@@ -5,7 +5,12 @@ import {
   usersTestRepository,
 } from '../../shared/utils/testing.utils';
 import { User } from './user.entity';
-import { Repository } from 'typeorm';
+import {
+  createConnection,
+  createConnections,
+  getConnection,
+  Repository,
+} from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { randomInt } from 'crypto';
 import { AppService } from '../../app.service';
@@ -15,7 +20,10 @@ describe('UsersService', () => {
   let appService: AppService;
   let usersRepo: Repository<User>;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
+    // await createConnection('test');
+    // getConnection('test');
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [UsersService, await usersTestRepository(), AppService],
     }).compile();
@@ -70,7 +78,7 @@ describe('UsersService', () => {
     });
   });
 
-  describe('findById', () => {
+  describe.only('findById', () => {
     let u1, u2;
     beforeAll(async () => {
       let users = await generateTestUsers(4);

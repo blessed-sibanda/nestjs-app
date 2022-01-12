@@ -1,26 +1,50 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import * as Joi from 'joi';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
+import { User } from './modules/users/user.entity';
 import { UsersModule } from './modules/users/users.module';
-import { ConfigModule } from './modules/config/config.module';
-import { ConfigService } from './modules/config/config.service';
+import { appConfig } from './shared/config/app.config';
+
+import {
+  databaseConfig,
+  IDatabaseConfig,
+} from './shared/config/database.config';
+import { envSchemaConfig } from './shared/config/env-schema.config';
 
 @Module({
   imports: [
     AuthModule,
     UsersModule,
-    // TypeOrmModule.forRootAsync({
-    //   imports: [ConfigModule],
-    //   inject: [ConfigService],
-    //   useFactory: (configService: ConfigService) => configService.dbConfig(),
-    // }),
-    TypeOrmModule.forRoot({}),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [databaseConfig, appConfig],
+      validationSchema: envSchemaConfig,
+      validationOptions: {
+        // allowUnknown: false,
+        abortEarly: true,
+      },
+      expandVariables: true,
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        database: configService.get<IDatabaseConfig>('database').database,
+        username: configService.get<IDatabaseConfig>('database').username,
+        host: configService.get<IDatabaseConfig>('database').host,
+        port: configService.get<IDatabaseConfig>('database').port,
+        password: configService.get<IDatabaseConfig>('database').password,
+        entities: ['dist/**/*.entity{.ts,.js}'],
+      }),
+      inject: [ConfigService],
+    }),
     MulterModule.register(),
-    ConfigModule,
   ],
   controllers: [AppController],
   providers: [AppService],
