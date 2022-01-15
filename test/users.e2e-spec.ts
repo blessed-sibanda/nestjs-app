@@ -5,9 +5,15 @@ import { User } from '../src/modules/users/user.entity';
 import { usersTestRepository } from '../src/shared/utils/testing.utils';
 import * as request from 'supertest';
 import { UsersModule } from '../src/modules/users/users.module';
+import { getConnection, createConnection } from 'typeorm';
 
 describe('UsersController (e2e)', () => {
   let app: INestApplication;
+
+  beforeAll(async () => {
+    await createConnection();
+    getConnection();
+  });
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({

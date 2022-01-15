@@ -21,6 +21,7 @@ import { envSchemaConfig } from './shared/config/env-schema.config';
     UsersModule,
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: process.env.NODE_ENV == 'test' ? '.test.env' : '.env',
       load: [databaseConfig, appConfig],
       validationSchema: envSchemaConfig,
       validationOptions: {
@@ -32,6 +33,7 @@ import { envSchemaConfig } from './shared/config/env-schema.config';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
+        name: 'test',
         database: configService.get<IDatabaseConfig>('database').database,
         username: configService.get<IDatabaseConfig>('database').username,
         host: configService.get<IDatabaseConfig>('database').host,

@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const connectionDetails = {
   host: 'localhost',
+  name: 'test',
   port: 5432,
   username: 'nestjs',
   password: '1234pass',
